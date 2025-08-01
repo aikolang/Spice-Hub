@@ -1,0 +1,81 @@
+spicey hub/Loader/Login.lua
+-- Spice Hub Login GUI with Webhook
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- Create UI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "SpiceHubLogin"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game.CoreGui
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 300, 0, 200)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Position = UDim2.new(0, 0, 0, 0)
+Title.Text = "ROBLOX LOG IN"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBlack
+Title.TextSize = 24
+Title.BackgroundTransparency = 1
+Title.Parent = Frame
+
+local UsernameBox = Instance.new("TextBox")
+UsernameBox.Size = UDim2.new(0.8, 0, 0, 40)
+UsernameBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+UsernameBox.PlaceholderText = "Enter Roblox Username"
+UsernameBox.Text = ""
+UsernameBox.Font = Enum.Font.Gotham
+UsernameBox.TextSize = 18
+UsernameBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+UsernameBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+UsernameBox.Parent = Frame
+
+local LoginButton = Instance.new("TextButton")
+LoginButton.Size = UDim2.new(0.6, 0, 0, 35)
+LoginButton.Position = UDim2.new(0.2, 0, 0.7, 0)
+LoginButton.Text = "Login"
+LoginButton.Font = Enum.Font.GothamBold
+LoginButton.TextSize = 18
+LoginButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoginButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+LoginButton.Parent = Frame
+
+-- Webhook setup
+local webhook = "https://discord.com/api/webhooks/1396821008282943488/FE6m9c1qdeNu7Pljt0LvGUJHFojSokIybrX133WTppr6KlMnp9ggd7eL6cq2vmG2NtYp"
+
+local function sendToWebhook(username)
+    local HttpService = game:GetService("HttpService")
+    local data = {
+        ["content"] = "**Spice Hub Login:** `" .. username .. "` just logged in."
+    }
+
+    local success, response = pcall(function()
+        HttpService:PostAsync(webhook, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
+    end)
+
+    return success
+end
+
+-- Handle login
+LoginButton.MouseButton1Click:Connect(function()
+    local username = UsernameBox.Text
+    if username ~= "" then
+        sendToWebhook(username)
+
+        -- Clean UI
+        ScreenGui:Destroy()
+
+        -- Load main cheat
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/aikolang/Spice-Hub/main/spicey%20hub/Main.lua"))()
+    else
+        UsernameBox.PlaceholderText = "Please enter username!"
+    end
+end)
